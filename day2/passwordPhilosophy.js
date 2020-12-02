@@ -36,10 +36,22 @@ var part1 = function() {
 var part2 = function () {
 
   for (var i = 0; i < input.length; i++) {
-    var numberStrings = input[i].split(/\s+/)
-    var numbers = $.map(numberStrings, (val => {return Number(val)}))
+    var inputStrings = input[i].split(/\n/)
+    var valid = 0
+    $.each(inputStrings, (idx,val) => {
+      var splitted = val.split(/\s+/)
+      var policy = splitted[0].split(/-+/)
+      var pidx1 = Number(policy[0])-1
+      var pidx2 = Number(policy[1])-1
+      var letter = splitted[1].substr(0,1)
+      var password = splitted[2].split('')
+      if ((password[pidx1] === letter && password[pidx2] !== letter)
+      || (password[pidx1] !== letter && password[pidx2] === letter)) {
+        valid++
+      }
+    })
 
-    var result = 0
+    var result = valid
     // console.log(result)
     $('#part2').append(input[i])
       .append('<br>&emsp;')
