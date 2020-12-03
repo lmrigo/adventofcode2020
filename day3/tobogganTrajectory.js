@@ -33,7 +33,7 @@ var part1 = function() {
       cury += 1
       curx = (curx + 3) % grid[cury].length
       if (grid[cury][curx] === '#') {
-        grid[cury][curx] = 'T'
+        // grid[cury][curx] = 'T'
         trees++
       }
     }
@@ -51,10 +51,39 @@ var part1 = function() {
 var part2 = function () {
 
   for (var i = 0; i < input.length; i++) {
-    var numberStrings = input[i].split(/\s+/)
-    var numbers = $.map(numberStrings, (val => {return Number(val)}))
+    var lines = input[i].split(/\n+/)
+    var grid = []
+    $.each(lines, (idx, l) => {
+      grid[idx] = l.split('')
+    })
+    // printgrid(grid)
 
-    var result = 0
+    //slopes
+    // Right 1, down 1.
+    // Right 3, down 1.
+    // Right 5, down 1.
+    // Right 7, down 1.
+    // Right 1, down 2.
+    var slopes = [[1,1], [3,1], [5,1], [7,1], [1,2]]
+    var trees = [0, 0, 0, 0, 0]
+
+    for (var s = 0; s < slopes.length; s++) {
+      var cury = 0
+      var curx = 0
+      while (cury < grid.length-1) {
+        cury += slopes[s][1]
+        curx = (curx + slopes[s][0]) % grid[cury].length
+        if (grid[cury][curx] === '#') {
+          trees[s]++
+        }
+      }
+    }
+    // printgrid(grid)
+
+    // console.log(trees)
+    var result = trees.reduce((acc,val) => {
+      return acc * val
+    })
     // console.log(result)
     $('#part2').append(input[i])
       .append('<br>&emsp;')
