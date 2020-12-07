@@ -50,11 +50,32 @@ var part1 = function() {
 var part2 = function () {
 
   for (var i = 0; i < input.length; i++) {
-    var numberStrings = input[i].split(/\s+/)
-    var numbers = $.map(numberStrings, (val => {return Number(val)}))
+    var groupStrings = input[i].split(/\n\n/)
+    // console.log(groupStrings)
+    var yesCount = 0
+    for (var g = 0; g < groupStrings.length; g++) {
+      var gMembers = groupStrings[g].split(/\s+/)
+      var answers = {}
+      $.each(gMembers, (idx,val) => {
+        var member = val.split(/\s+/)
+        $.each(member, (idx2,m) => {
+          var questions = m.split('')
+          $.each(questions,(idx3,q) => {
+            if (answers[q] === undefined) {
+              answers[q] = 0
+            }
+            answers[q] += 1
+          })
+        })
+      })
+      $.each(Object.keys(answers), (idx,k)  => {
+        if (answers[k] === gMembers.length){
+          yesCount += 1
+        }
+      })
+    }
 
-    var result = 0
-    // console.log(result)
+    var result = yesCount    // console.log(result)
     $('#part2').append(input[i])
       .append('<br>&emsp;')
       .append(result)
