@@ -58,11 +58,57 @@ var part1 = function() {
 
 var part2 = function () {
 
-  for (var i = 0; i < input.length; i++) {
-    var numberStrings = input[i].split(/\s+/)
-    var numbers = $.map(numberStrings, (val => {return Number(val)}))
+  for (var i = 5; i < input.length; i++) {
+    var seatsStrings = input[i].split(/\s+/)
+    var seatsIds = []
 
-    var result = 0
+    $.each(seatsStrings,(idx,seat)=>{
+      var s = seat.split('')
+      // row
+      var rtop = 127
+      var rbottom = 0
+      for (var y = 0; y < 7; y++) {
+        var l = s.shift()
+        if (l === 'F') {
+          rtop -= Math.ceil((rtop-rbottom) / 2)
+        } else if (l === 'B') {
+          rbottom += Math.ceil((rtop-rbottom) / 2)
+        }
+      }
+      // col
+      var ctop = 7
+      var cbottom = 0
+      for (var y = 0; y < 3; y++) {
+        var l = s.shift()
+        if (l === 'L') {
+          ctop -= Math.ceil((ctop-cbottom) / 2)
+        } else if (l === 'R') {
+          cbottom += Math.ceil((ctop-cbottom) / 2)
+        }
+      }
+      var sid = (rbottom*8) + cbottom
+      // console.log(rbottom,cbottom,sid)
+      seatsIds.push(Number(sid))
+
+    })
+    seatsIds.sort((a,b)=>{return b-a})
+    var next = null
+    var before = null
+    for (var s = 1; s < seatsIds.length-1; s++) {
+      if (seatsIds[s]+1 !== seatsIds[s-1]) {
+        before = seatsIds[s]
+      }
+      if ( seatsIds[s]-1 !== seatsIds[s+1]) {
+        next = seatsIds[s]
+      }
+    }
+    var seatId = -1
+    if ((next-1) === (before+1)){
+      seatId = next-1
+    }
+    // console.log(seatId) //617
+
+    var result = seatId
     // console.log(result)
     $('#part2').append(input[i])
       .append('<br>&emsp;')
