@@ -20,6 +20,7 @@ var Computer = function () {
     var fullop = this.program[this.pc]
     if (fullop === undefined) {
       this.halted = true
+      return
     }
     var instruction = fullop.split(/\s+/)
     var op = instruction[0]
@@ -63,10 +64,41 @@ var part1 = function() {
 var part2 = function () {
 
   for (var i = 0; i < input.length; i++) {
-    var numberStrings = input[i].split(/\s+/)
-    var numbers = $.map(numberStrings, (val => {return Number(val)}))
+    var instructions = input[i].split(/\n+/)
+    var jmps = []
+    var nops = []
+    $.each(instructions,(idx, val) =>{
+      if(val.startsWith('jmp')) {
+        jmps.push(idx)
+      } else if(val.startsWith('nop')) {
+        nops.push(idx)
+      }
+    })
+    // console.log(jmps,nops)
+    var success = false
+    var finalacc = 0
+    // TODO: assumption: it will not repeat instructions
+    while (jmps.length > 0) {
+      var com = new Computer()
+      com.program = instructions.slice()
+      var jidx = jmps.shift()
+      com.program[jidx] = com.program[jidx].replace('jmp','nop')
+      var visited = {}
+      var v = 1
+      while(visited[com.pc] === undefined && !com.halted) {
+        visited[com.pc] = v++
+        com.execute()
+      }
+      if (com.halted) {
+        success = true
+        finalacc = com.acc
+        break
+      }
+    }
+    // console.log(jmps,nops)
+    // TODO: it was not needed to test the nop-jmp replacements. Answer was already found
 
-    var result = 0
+    var result = finalacc
     // console.log(result)
     $('#part2').append(input[i])
       .append('<br>&emsp;')
