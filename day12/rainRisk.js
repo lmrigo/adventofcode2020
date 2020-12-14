@@ -80,13 +80,69 @@ var part1 = function() {
   }
 }
 
+var Waypoint = function() {
+  this.ns = 1
+  this.we = 10
+  this.rotateLeft = function() {
+    var newNs = this.we  // E->N | W->S
+    var newWe = this.ns * -1 // N->W | S->E
+    this.ns = newNs
+    this.we = newWe
+  }
+  this.rotateRight = function() {
+    var newNs = this.we * -1 // E->S | W->N
+    var newWe = this.ns // N->E | S->W
+    this.ns = newNs
+    this.we = newWe
+  }
+  this.turnAround = function() {
+    var newNs = this.ns * -1 // N->S | S->N
+    var newWe = this.we * -1 // W->E | E->W
+    this.ns = newNs
+    this.we = newWe
+  }
+}
+
 var part2 = function () {
 
   for (var i = 0; i < input.length; i++) {
-    var numberStrings = input[i].split(/\s+/)
-    var numbers = $.map(numberStrings, (val => {return Number(val)}))
+    var posStrings = input[i].split(/\s+/)
+    var ship = new Ship()
+    var wp = new Waypoint()
+    $.each(posStrings,(idx,val)=>{
+      var op = val.substr(0,1)
+      var num = Number(val.substr(1))
+      switch(op) {
+        case 'N': wp.ns += num;break;
+        case 'S': wp.ns -= num;break;
+        case 'E': wp.we += num;break;
+        case 'W': wp.we -= num;break;
+        case 'L': {
+          switch(num) {
+            case 90: wp.rotateLeft();break;
+            case 180: wp.turnAround();break;
+            case 270: wp.rotateRight();break;
+            default: console.log('opa!',op,num)
+          }
+        }; break;
+        case 'R': {
+          switch(num) {
+            case 90: wp.rotateRight();break;
+            case 180: wp.turnAround();break;
+            case 270: wp.rotateLeft();break;
+            default: console.log('opa!',op,num)
+          }
+        }; break;
+        case 'F': {
+          ship.ns += num*wp.ns;
+          ship.we += num*wp.we;
+          break;
+        }; break;
+        default: console.log('opa!',op,num)
+      }
+    })
 
-    var result = 0
+    var result = Math.abs(ship.ns) + Math.abs(ship.we)
     // console.log(result)
     $('#part2').append(input[i])
       .append('<br>&emsp;')
