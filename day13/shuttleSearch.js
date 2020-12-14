@@ -70,6 +70,7 @@ var part2 = function () {
     }))
     // console.log(buses)
 
+/*
     var maxBus = buses.reduce((acc,val) => {
       if (val === 'x') {
         return acc
@@ -78,10 +79,11 @@ var part2 = function () {
     })
     var maxBusIdx = buses.indexOf(maxBus)
 
+    // Works but it's slow for the giant input
     var foundCombo = false
     var timestamp = -1
     var round = 1
-    var timeout = 10*1000*1000
+    var timeout = 1*1000*1000
     while (!foundCombo && timeout-- > 0) {
       var time = round*maxBus
 
@@ -98,6 +100,24 @@ var part2 = function () {
       }
       round++
     }
+*/
+
+    // heavily based on a solution from reddit (SilverDrake11)
+    var timestamp = 1
+    var offset = 1
+    for (var b = 0; b < buses.length; b++) {
+      if (buses[b] === 'x') {
+        continue
+      }
+      var timeout = 1*1000*1000
+      while (timeout-- > 0) {
+        if ((timestamp + b) % buses[b] === 0) {
+          offset *= buses[b]
+          break
+        }
+        timestamp += offset
+      }
+    }
 
     var result = timestamp
     // console.log(result)
@@ -107,7 +127,6 @@ var part2 = function () {
       .append(result)
       .append('<br>')
   }
-
 }
 
 $(function (){
