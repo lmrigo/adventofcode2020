@@ -1,6 +1,16 @@
 var input = [
 `939
-7,13,x,x,59,x,31,19`
+7,13,x,x,59,x,31,19` // 1068781
+,`1
+17,x,13,19` // 3417
+,`1
+67,7,59,61` // 754018
+,`1
+67,x,7,59,61` // 779210
+,`1
+67,7,x,59,61` // 1261476
+,`1
+1789,37,47,1889` // 1202161486
  ,puzzleInput
 ]
 
@@ -51,11 +61,47 @@ var part1 = function() {
 var part2 = function () {
 
   for (var i = 0; i < input.length; i++) {
-    var numberStrings = input[i].split(/\s+/)
-    var numbers = $.map(numberStrings, (val => {return Number(val)}))
+    var inputStrings = input[i].split(/\s+/)
+    var buses = $.map(inputStrings[1].split(','), (val => {
+      if (val !== 'x') {
+        return Number(val)
+      }
+      return val
+    }))
+    // console.log(buses)
 
-    var result = 0
+    var maxBus = buses.reduce((acc,val) => {
+      if (val === 'x') {
+        return acc
+      }
+      return acc > val ? acc : val
+    })
+    var maxBusIdx = buses.indexOf(maxBus)
+
+    var foundCombo = false
+    var timestamp = -1
+    var round = 1
+    var timeout = 10*1000*1000
+    while (!foundCombo && timeout-- > 0) {
+      var time = round*maxBus
+
+      var okCount = 0
+      for (var b = 0; b < buses.length; b++) {
+        if (buses[b] === 'x'
+          || ((time - (maxBusIdx-b)) % buses[b] === 0)) {
+          okCount++
+        }
+      }
+      if (okCount === buses.length) {
+        foundCombo = true
+        timestamp = time - maxBusIdx
+      }
+      round++
+    }
+
+    var result = timestamp
     // console.log(result)
+
     $('#part2').append(input[i])
       .append('<br>&emsp;')
       .append(result)
